@@ -1,9 +1,12 @@
 ###Goal: Create table 4: R-card E. coli results for in-stream sampling locations 
 setwd("C:\\Users\\diayeh\\OneDrive - King County\\PICScienceFiles\\Projects\\Massey Creek_NEP_MST_2023-2026\\Data and Analysis")
+
 #Code to set the file explorer on the bottom right: 
 rstudioapi::filesPaneNavigate(getwd())
 MasseyOverallResults <- read_excel("MasseyOverallResults.xlsx", 
                                    +     sheet = "Source_Tracking")
+
+setwd("C://Users//diayeh//OneDrive - King County//PICScienceFiles//Projects//Massey Creek_NEP_MST_2023-2026//Data and Analysis//Final_Report")
 
 ###load in dataset 
 MSTMassey <- MasseyOverallResults
