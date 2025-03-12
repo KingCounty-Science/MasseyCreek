@@ -99,6 +99,7 @@ MasseyNThreshold <- MSTMassey %>%
   filter(!Replicate %in% c("Y2")) %>%
   filter(!Locator %in% c("FLD_BLK")) %>%
   group_by(Locator) %>%
+  mutate(Result = as.numeric(Result)) %>%
   summarise(NThreshold = sum(Result > 200, na.rm = FALSE)) %>%
   distinct(Locator, .keep_all = TRUE) %>%
   select(Locator, NThreshold)
@@ -160,6 +161,7 @@ MasseytotalContamination<- MSTMassey %>%
   filter(SampleType %in% c("R-Card")) %>%
   filter(!Replicate %in% c("Y2")) %>%
   filter(!Locator %in% c("FLD_BLK")) %>%
+  mutate(Result = as.numeric(Result)) %>%
   summarise(Result = sum(Result > 0, na.rm = FALSE))
 View(MasseytotalContamination)  
 
@@ -170,6 +172,7 @@ MasseytotalRcards<- MSTMassey %>%
   filter(SampleType %in% c("R-Card")) %>%
   filter(!Replicate %in% c("Y2")) %>%
   filter(!Locator %in% c("FLD_BLK")) %>%
+  mutate(Result = as.numeric(Result)) %>%
   summarise(count=n())
 
 View(MasseytotalRcards)    
@@ -186,11 +189,12 @@ MasseytotalThreshold<- MSTMassey %>%
   filter(SampleType %in% c("R-Card")) %>%
   filter(!Replicate %in% c("Y2")) %>%
   filter(!Locator %in% c("FLD_BLK")) %>%
+  mutate(Result = as.numeric(Result)) %>%
   summarise(Result = sum(Result > 200, na.rm = FALSE))
 View(MasseytotalThreshold)  
 
 ###Percent of R cards with fecal contamination above threshold
-110/187
+98/187
 
 ###Number of sampling events (i.e., number of sampling dates)
 MasseyNDates<- MSTMassey %>%
@@ -198,3 +202,5 @@ MasseyNDates<- MSTMassey %>%
   filter(between (Date, as.Date("2023-09-01"), as.Date("2023-11-30"))) %>%
   distinct(Date) %>%
   summarise(count=n())
+
+View(MasseyNDates)
