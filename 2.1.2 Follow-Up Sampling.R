@@ -16,7 +16,8 @@ MasseyFollowResults <- MSTMassey %>%
   filter(!Source %in% c("Stream")) %>%
   filter(!Replicate %in% c("Y2")) %>%
   filter(!Locator %in% c("FLD_BLK")) %>%
-  select(Locator, Result)
+  rename(LabEC = Result) %>%
+  select(Locator, Date, LabEC)
 
 View(MasseyFollowResults)
 
@@ -29,7 +30,8 @@ MasseyFollowRCard <- MSTMassey %>%
   filter(!Source %in% c("Stream")) %>%
   filter(!Replicate %in% c("Y2")) %>%
   filter(!Locator %in% c("FLD_BLK")) %>%
-  select(Locator, Result)
+  rename(RCardEC = Result) %>%
+  select(Locator, Date, RCardEC)
 
 View(MasseyFollowRCard )
 
@@ -43,7 +45,7 @@ MasseyFollowDog<- MSTMassey %>%
   filter(!Locator %in% c("FLD_BLK")) %>%
   mutate(Result = as.numeric(Result)) %>%
   rename(Dog_biomarker = Result) %>%
-  select(Locator, Dog_biomarker)
+  select(Locator, Date, Dog_biomarker)
 
 options(scipen = 999)
 
@@ -60,7 +62,7 @@ MasseyFollowHu<- MSTMassey %>%
   filter(!Locator %in% c("FLD_BLK")) %>%
   mutate(Result = as.numeric(Result)) %>%
   rename(Hu_biomarker = Result) %>%
-  select(Locator, Hu_biomarker)
+  select(Locator, Date, Hu_biomarker)
 
 options(scipen = 999)
 
@@ -79,53 +81,60 @@ MasseyFollowObs <- MSTMassey %>%
 
 View(MasseyFollowObs)
 
-#Join Biomarker Tables Together ####
-MasseyFollowbiomarkers<- MasseyFollowDog %>%
-  left_join(MasseyFollowHu, by = "Locator")
-View(MasseyFollowbiomarkers)
+#Join all Together ####
+MasseyFollowAll <- MasseyFollowResults %>%
+  full_join(MasseyFollowRCard, by = c("Locator", "Date")) %>%
+  full_join(MasseyFollowDog, by = c("Locator", "Date")) %>%
+  full_join(MasseyFollowHu, by = c("Locator", "Date"))
+
+View(MasseyFollowAll)
+MasseyFollowAll <-MasseyFollowAll %>% arrange(Locator)
+write.csv(MasseyFollowAll, "MasseyFollowAll.csv")
 
 #Export all Tables ####
 
-MasseyFollowResults <-MasseyFollowResults %>% arrange(Locator)
-write.csv(MasseyFollowResults, "MasseyFollowResults.csv")
+#MasseyFollowResults <-MasseyFollowResults %>% arrange(Locator)
+#write.csv(MasseyFollowResults, "MasseyFollowResults.csv")
 
-MasseyFollowRCard <-MasseyFollowRCard %>% arrange(Locator)
-write.csv(MasseyFollowRCard, "MasseyFollowRcard.csv")
+#MasseyFollowRCard <-MasseyFollowRCard %>% arrange(Locator)
+#write.csv(MasseyFollowRCard, "MasseyFollowRcard.csv")
 
-MasseyFollowbiomarkers <-MasseyFollowbiomarkers %>% arrange(Locator)
-write.csv(MasseyFollowbiomarkers, "MasseyFollowbiomarkers.csv")
+#MasseyFollowbiomarkers <-MasseyFollowbiomarkers %>% arrange(Locator)
+#write.csv(MasseyFollowbiomarkers, "MasseyFollowbiomarkers.csv")
 
 getwd()
 
 # === === === Stream samples ####
 #Lab results####
 
-MasseyFollowResults <- MSTMassey %>%
+MasseyFollowLabECStream <- MSTMassey %>%
   filter(Project == "Massey Creek") %>%
   filter(between (Date, as.Date("2023-12-01"), as.Date("2023-12-30"))) %>%
   filter(SampleType == "Lab EC") %>%
   filter(Source == "Stream") %>%
   filter(!Replicate %in% c("Y2")) %>%
   filter(!Locator %in% c("FLD_BLK")) %>%
-  select(Locator, Result)
+  rename(LabEC= Result) %>%
+  select(Locator, Date, LabEC)
 
-View(MasseyFollowResults)
+View(MasseyFollowLabECStream)
 
 #R card results####
 
-MasseyFollowRCard <- MSTMassey %>%
+MasseyFollowRCardStream <- MSTMassey %>%
   filter(Project == "Massey Creek") %>%
   filter(between (Date, as.Date("2023-12-01"), as.Date("2023-12-30"))) %>%
   filter(SampleType == "R-Card") %>%
   filter(Source == "Stream") %>%
   filter(!Replicate %in% c("Y2")) %>%
   filter(!Locator %in% c("FLD_BLK")) %>%
-  select(Locator, Result)
+  rename(Rcard = Result) %>%
+  select(Locator, Date, Rcard)
 
-View(MasseyFollowRCard )
+View(MasseyFollowRCardStream)
 
 #Biomarker Results - Dog####
-MasseyFollowDog<- MSTMassey %>%
+MasseyFollowDogStream<- MSTMassey %>%
   filter(Project == "Massey Creek") %>%
   filter(between (Date, as.Date("2023-12-01"), as.Date("2023-12-30"))) %>%
   filter(SampleType == "Dog1-Bac") %>%
@@ -134,15 +143,15 @@ MasseyFollowDog<- MSTMassey %>%
   filter(!Locator %in% c("FLD_BLK")) %>%
   mutate(Result = as.numeric(Result)) %>%
   rename(Dog_biomarker = Result) %>%
-  select(Locator, Dog_biomarker)
+  select(Locator, Date, Dog_biomarker)
 
 options(scipen = 999)
 
-View(MasseyFollowDog)
+View(MasseyFollowDogStream)
 
 #Biomarker Results - Human####
 
-MasseyFollowHu<- MSTMassey %>%
+MasseyFollowHuStream<- MSTMassey %>%
   filter(Project == "Massey Creek") %>%
   filter(between (Date, as.Date("2023-12-01"), as.Date("2023-12-30"))) %>%
   filter(SampleType == "Hu2-Bac") %>%
@@ -151,39 +160,49 @@ MasseyFollowHu<- MSTMassey %>%
   filter(!Locator %in% c("FLD_BLK")) %>%
   mutate(Result = as.numeric(Result)) %>%
   rename(Hu_biomarker = Result) %>%
-  select(Locator, Hu_biomarker)
+  select(Locator, Date, Hu_biomarker)
 
 options(scipen = 999)
 
-View(MasseyFollowHu)
+View(MasseyFollowHuStream)
+
+#Join all Together ####
+MasseyFollowAllStream <- MasseyFollowLabECStream %>%
+  full_join(MasseyFollowRCardStream, by = c("Locator", "Date")) %>%
+  full_join(MasseyFollowDogStream, by = c("Locator", "Date")) %>%
+  full_join(MasseyFollowHuStream, by = c("Locator", "Date"))
+
+View(MasseyFollowAllStream)
+MasseyFollowAllStream <-MasseyFollowAllStream%>% arrange(Locator)
+write.csv(MasseyFollowAllStream, "MasseyFollowAllStream.csv")
 
 #Observation only ####
 
-MasseyFollowObs <- MSTMassey %>%
-  filter(Project == "Massey Creek") %>%
-  filter(between (Date, as.Date("2023-12-01"), as.Date("2023-12-30"))) %>%
-  filter(SampleType == "Observation") %>%
-  filter(Source == "Stream") %>%
-  filter(!Replicate %in% c("Y2")) %>%
-  filter(!Locator %in% c("FLD_BLK")) %>%
-  select(Locator, Result)
+#MasseyFollowObs <- MSTMassey %>%
+  #filter(Project == "Massey Creek") %>%
+  #filter(between (Date, as.Date("2023-12-01"), as.Date("2023-12-30"))) %>%
+  #filter(SampleType == "Observation") %>%
+  #filter(Source == "Stream") %>%
+  #filter(!Replicate %in% c("Y2")) %>%
+  #filter(!Locator %in% c("FLD_BLK")) %>%
+  #select(Locator, Result)
 
-View(MasseyFollowObs)
+#View(MasseyFollowObs)
 
 #Join Biomarker Tables Together ####
-MasseyFollowbiomarkers<- MasseyFollowDog %>%
-  left_join(MasseyFollowHu, by = "Locator")
-View(MasseyFollowbiomarkers)
+#MasseyFollowbiomarkers<- MasseyFollowDog %>%
+ # left_join(MasseyFollowHu, by = "Locator")
+#View(MasseyFollowbiomarkers)
 
 #Export all Tables ####
 
-MasseyFollowResults <-MasseyFollowResults %>% arrange(Locator)
-write.csv(MasseyFollowResults, "StreamMasseyFollowResults.csv")
+#MasseyFollowResults <-MasseyFollowResults %>% arrange(Locator)
+#(MasseyFollowResults, "StreamMasseyFollowResults.csv")
 
-MasseyFollowRCard <-MasseyFollowRCard %>% arrange(Locator)
-write.csv(MasseyFollowRCard, "StreamMasseyFollowRcard.csv")
+#MasseyFollowRCard <-MasseyFollowRCard %>% arrange(Locator)
+#write.csv(MasseyFollowRCard, "StreamMasseyFollowRcard.csv")
 
-MasseyFollowbiomarkers <-MasseyFollowbiomarkers %>% arrange(Locator)
-write.csv(MasseyFollowbiomarkers, "StreamMasseyFollowbiomarkers.csv")
+# <-MasseyFollowbiomarkers %>% arrange(Locator)
+#write.csv(MasseyFollowbiomarkers, "StreamMasseyFollowbiomarkers.csv")
 
-getwd()
+#getwd()
