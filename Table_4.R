@@ -6,7 +6,7 @@ rstudioapi::filesPaneNavigate(getwd())
 MasseyOverallResults <- read_excel("MasseyOverallResults.xlsx", 
                                    +     sheet = "Source_Tracking")
 
-setwd("C://Users//diayeh//OneDrive - King County//PICScienceFiles//Projects//Massey Creek_NEP_MST_2023-2026//Data and Analysis//Final_Report")
+setwd("C://Users//diayeh//OneDrive - King County//PICScienceFiles//Projects//Massey Creek_NEP_MST_2023-2026//Data and Analysis/Final_Report")
 
 ###load in dataset 
 MSTMassey <- MasseyOverallResults

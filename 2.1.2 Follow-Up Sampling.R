@@ -77,7 +77,9 @@ MasseyFollowObs <- MSTMassey %>%
   filter(!Source %in% c("Stream")) %>%
   filter(!Replicate %in% c("Y2")) %>%
   filter(!Locator %in% c("FLD_BLK")) %>%
-  select(Locator, Result)
+  mutate(Result = 1) %>%
+  rename(nObs = Result) %>%
+  select(Locator, Date, nObs)
 
 View(MasseyFollowObs)
 
@@ -85,7 +87,11 @@ View(MasseyFollowObs)
 MasseyFollowAll <- MasseyFollowResults %>%
   full_join(MasseyFollowRCard, by = c("Locator", "Date")) %>%
   full_join(MasseyFollowDog, by = c("Locator", "Date")) %>%
-  full_join(MasseyFollowHu, by = c("Locator", "Date"))
+  full_join(MasseyFollowHu, by = c("Locator", "Date")) %>%
+  full_join(MasseyFollowObs, by = c("Locator", "Date")) %>%
+  mutate(across(everything(), as.character)) %>%
+  mutate(across(everything(), ~replace_na(., "NS"))) %>%
+  mutate(nObs = na_if(nObs, "NS"))
 
 View(MasseyFollowAll)
 MasseyFollowAll <-MasseyFollowAll %>% arrange(Locator)
